@@ -5,9 +5,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// 🔄 Shared status data
 let botStatus = {};
 let botInfo = {};
 
+// 🌐 Global methods for other files
 global.updateBotStatus = (status) => {
   botStatus = { ...botStatus, ...status };
 };
@@ -20,19 +22,19 @@ global.broadcastChatMessage = (msg) => {
   io.emit('chat', msg);
 };
 
-// Serve dashboard
+// 📁 Static site for dashboard
 app.use(express.static('public'));
 
-// Status API
+// ✅ Keep-alive root
+app.get('/', (req, res) => {
+  res.send('✅ HerobrineAFK server is alive');
+});
+
+// 🧠 Status endpoints
 app.get('/api/status', (req, res) => res.json(botStatus));
 app.get('/api/bot/info', (req, res) => res.json(botInfo));
 
-// Root keep-alive endpoint
-app.get('/', (req, res) => {
-  res.send('✅ HerobrineAFK Express server alive');
-});
-
-// Socket.IO connection
+// 🧿 Handle viewer connections
 io.on('connection', (socket) => {
   console.log('🧿 Viewer connected');
 
@@ -45,13 +47,16 @@ io.on('connection', (socket) => {
   });
 });
 
-// Handle rare server errors
+// 🛡️ Catch server errors without crashing
 server.on('error', (err) => {
   if (err.code === 'ECONNRESET') {
-    console.warn('⚠️ ECONNRESET – ghost dropped the connection...');
+    console.warn('⚠️ ECONNRESET – a ghost fled the connection too fast.');
   } else {
     console.error('🔥 Server error:', err);
   }
 });
 
-server.listen(3000, () => console.log('🧩 Express + Socket.IO server fully patched and running'));
+// 🚀 Launch server
+server.listen(3000, () => {
+  console.log('🧩 Express + Socket.IO server fully patched and running');
+});
