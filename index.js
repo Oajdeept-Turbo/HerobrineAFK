@@ -39,9 +39,11 @@ function startRandomMovement() {
   isMoving = true;
   console.log("Bot started moving");
 
-  if (typeof global.updateBotStatus === "function") {
-    global.updateBotStatus({ isMoving: true });
-  }
+ if (typeof global.updateBotStatus === 'function') {
+  global.updateBotStatus('online');
+  global.updateBotInfo({ username: bot.username, uuid: bot.uuid });
+}
+
 
   movementInterval = setInterval(
     () => {
