@@ -1,8 +1,8 @@
 const mineflayer = require('mineflayer');
-require('./server'); // Load global methods from server.js
+require('./server'); // Load global methods
 
 const botConfig = {
-  host: 'SingedBeet-DBBE.aternos.me', // Replace this
+  host: 'SingedBeet-DBBE.aternos.me', // Replace with your actual host
   port: 22419,
   username: 'HerobrineAFKK',
   auth: 'offline',
@@ -13,6 +13,10 @@ const bot = mineflayer.createBot(botConfig);
 
 bot.on('login', () => {
   console.log(`👻 Logged in as ${bot.username}`);
+});
+
+bot.once('spawn', () => {
+  console.log('🕳️ Herobrine spawned.');
 
   global.updateBotStatus?.({
     username: bot.username,
@@ -22,7 +26,12 @@ bot.on('login', () => {
     isMoving: false
   });
 
-  global.updateBotInfo?.({ username: bot.username, uuid: bot.uuid });
+  global.updateBotInfo?.({
+    username: bot.username,
+    uuid: bot.uuid
+  });
+
+  haunt();
 });
 
 bot.on('chat', (username, message) => {
@@ -30,7 +39,6 @@ bot.on('chat', (username, message) => {
   global.broadcastChatMessage?.({ username, message });
 });
 
-// 👟 Herobrine movement loop
 function haunt() {
   const moves = ['forward', 'back', 'left', 'right', 'jump'];
   setInterval(() => {
@@ -44,8 +52,3 @@ function haunt() {
     });
   }, 3000 + Math.random() * 2000);
 }
-
-bot.once('spawn', () => {
-  console.log('🕳️ Herobrine spawned.');
-  haunt();
-});
