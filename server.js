@@ -1,58 +1,24 @@
-const express = require("express");
-const path = require("path");
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const app = express();
-const server = require("http").createServer(app);
-const io = require("socket.io")(server);
-require("./keep_alive");
+const server = http.createServer(app);
+const io = new Server(server);
 
-let botStatus = {
-  username: "HerobrineAFK",
-  server: "Unknown",
-  isConnected: false,
-  isMoving: false,
-  position: { x: 0, y: 64, z: 0 },
-};
+let botStatus = {};
+let botInfo = {};
 
-global.updateBotStatus = function (statusUpdate) {
-  botStatus = { ...botStatus, ...statusUpdate };
-  console.log("Bot status updated:", botStatus);
-};
+global.updateBotStatus = (status) => { botStatus = status; };
+global.updateBotInfo = (info) => { botInfo = info; };
+global.broadcastChatMessage = (msg) => io.emit('chat', msg);
 
-global.broadcastChatMessage = function (data) {
-  // Broadcast chat message to connected clients
-  io.emit("chatMessage", data);
-};
+app.use(express.static('public'));
 
-global.botSendChat = function (message) {
-  // This will be overridden by the bot when it connects
-  console.log("Bot would send message:", message);
-};
+app.get('/api/status', (req, res) => res.json(botStatus));
+app.get('/api/bot/info', (req, res) => res.json(botInfo));
 
-// Serve the main page
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+io.on('connection', (socket) => {
+  console.log("Viewer connected");
 });
 
-// API endpoints
-app.get("/api/status", (req, res) => {
-  res.json({ success: true, data: botStatus });
-});
-
-app.get("/api/bot/info", (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      username: botStatus.username,
-      server: botStatus.server,
-      isConnected: botStatus.isConnected,
-      isMoving: botStatus.isMoving,
-      position: botStatus.position,
-      uptime: process.uptime(),
-    },
-  });
-});
-
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+server.listen(3000, () => console.log("Socket.IO server running"));
