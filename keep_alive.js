@@ -1,10 +1,5 @@
-const express = require("express");
+const express = require('express');
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("Bot is alive!");
-});
-
-app.listen(3000, () => {
-  console.log("Keep-alive server running");
-});
+app.get('/', (req, res) => res.send('HerobrineAFK Codespace is alive'));
+app.listen(3000, () => console.log('Keep_alive server running'));
