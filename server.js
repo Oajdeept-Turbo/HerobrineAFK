@@ -70,3 +70,4 @@ server.on('error', (err) => {
 server.listen(3000, () => {
   console.log('🧩 HerobrineAFK server running and whispering to Discord');
 });
+
