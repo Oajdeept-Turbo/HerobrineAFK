@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head><title>HerobrineAFK Monitor</title></head>
+<body>
+  <h1>👻 Herobrine Status</h1>
+  <div id="status">Checking status...</div>
+  <ul id="chat"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const statusEl = document.getElementById('status');
+    const chatLog = document.getElementById('chat');
+    const socket = io();
+
+    fetch('/api/status')
+      .then(res => res.json())
+      .then(data => {
+        statusEl.textContent = `Online: ${data.isConnected}, Pos: ${JSON.stringify(data.position)}`;
+      });
+
+    socket.on('chat', (msg) => {
+      const li = document.createElement('li');
+      li.textContent = `${msg.username}: ${msg.message}`;
+      chatLog.appendChild(li);
+    });
+  </script>
+</body>
+</html>
+
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+
+app.use(express.static('public'));
+
+server.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});
