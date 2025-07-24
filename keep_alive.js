@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 
-app.get('/', (req, res) => res.send('HerobrineAFK is alive'));
+app.get('/', (req, res) => res.send('👻 HerobrineAFK is haunting 24x7!'));
 
-module.exports = app; // Don't start a second server
+app.listen(3001, () => {
+  console.log('🚨 Keep-alive server running on port 3000');
+});
